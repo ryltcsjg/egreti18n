@@ -3,7 +3,8 @@ import {
   formattime,
   readFile,
   shallowEqual,
-  writeFile
+  writeFile,
+  Log
 } from "./util";
 
 const fs = require("fs");
@@ -19,8 +20,6 @@ const exmlPath = ".wing/exml.json";
 let skinPath = "";
 const destPath = "resource/i18n";
 const cachePath = "temp/i18n";
-
-let Log = vscode.window.createOutputChannel("egreti18n");
 
 Log.appendLine("工作路径：" + workPath);
 

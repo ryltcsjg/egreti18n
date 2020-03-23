@@ -2,7 +2,7 @@
   "name": "egreti18n",
   "displayName": "egreti18n",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "ok",
   "engines": {
     "vscode": "^1.43.0"
@@ -12,18 +12,26 @@
   ],
   "activationEvents": [
     "onCommand:extension.EgretIi8nSave",
-    "onCommand:extension.EgretI18nUse"
+    "onCommand:extension.EgretI18nUse",
+    "onCommand:extension.EgretI18nExportChinese"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "extension.EgretIi8nSave",
-        "title": "EgretIi8n save"
+        "title": "EgretIi8n save",
+        "category": "保存.exml内容至resource/i18n(覆盖)： "
       },
       {
         "command": "extension.EgretI18nUse",
-        "title": "EgretIi8n use"
+        "title": "EgretIi8n use",
+        "category": "切换语言（合并）： "
+      },
+      {
+        "command": "extension.EgretI18nExportChinese",
+        "title": "EgretIi8n ExportChinese",
+        "category": "提取皮肤文件中文至exml.json： "
       }
     ],
     "configuration": {
@@ -36,7 +44,58 @@
             "type": "string"
           },
           "markdownDescription": "皮肤文件路径",
-          "scope": "window"
+          "scope": "window",
+          "default": "resource/skins"
+        },
+        "EgretIi8n.exportTags": {
+          "type": "array",
+          "items": {
+            "type": "array"
+          },
+          "markdownDescription": "导出标签数组",
+          "scope": "window",
+          "default": [
+            [
+              "e:Label",
+              "text"
+            ],
+            [
+              "e:Label",
+              "text.up"
+            ],
+            [
+              "e:Label",
+              "text.down"
+            ],
+            [
+              "e:Label",
+              "text.disabled"
+            ],
+            [
+              "e:Label",
+              "text.unOpen"
+            ],
+            [
+              "e:BitmapLabel",
+              "text"
+            ],
+            [
+              "e:Button",
+              "label"
+            ],
+            [
+              "e:EditableText",
+              "prompt"
+            ],
+            [
+              "e:EditableText",
+              "text"
+            ],
+            [
+              "e:TextInput",
+              "prompt"
+            ]
+          ]
         }
       }
     }
@@ -61,5 +120,8 @@
     "mocha": "^7.0.1",
     "typescript": "^3.7.5",
     "vscode-test": "^1.3.0"
+  },
+  "dependencies": {
+    "uuid": "^7.0.2"
   }
 }

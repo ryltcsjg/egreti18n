@@ -1,5 +1,6 @@
 const fs = require("fs");
 const Path = require("path");
+const vscode = require("vscode");
 
 export function promisify(fn: Function): Function {
   return function(...args: any): Promise<any> {
@@ -113,3 +114,5 @@ export function formattime(time: number, formatstr = "yyyy-MM-dd-HH:mm:ss") {
     .replace(/mm/g, date.getMinutes().toString())
     .replace(/ss/gi, date.getSeconds().toString());
 }
+
+export const Log = vscode.window.createOutputChannel("egreti18n");

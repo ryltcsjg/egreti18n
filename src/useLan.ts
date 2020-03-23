@@ -4,7 +4,8 @@ import {
   readFile,
   writeFile,
   shallowEqual,
-  coverData
+  coverData,
+  Log
 } from "./util";
 
 const fs = require("fs");
@@ -20,8 +21,6 @@ const destPath = ".wing";
 const jsonPath = "resource/i18n";
 
 let output: any = {};
-
-let Log = vscode.window.createOutputChannel("egreti18n");
 
 Log.appendLine("工作路径：" + workPath);
 

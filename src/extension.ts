@@ -6,6 +6,7 @@ import * as vscode from "vscode";
 
 import { save } from "./save";
 import { useLan } from "./useLan";
+import { exportChinese } from "./exportChinese";
 
 export function activate(context: vscode.ExtensionContext) {
   console.log("egreti18n start");
@@ -49,13 +50,22 @@ export function activate(context: vscode.ExtensionContext) {
       }
       vscode.window.showInformationMessage("切换语言，合并至.wing/exmljson");
       useLan(lan).then(() => {
-        setTimeout(
-          () => vscode.commands.executeCommand("workbench.action.reloadWindow"),
-          1000
-        );
+        vscode.window.showInformationMessage("切换语言成功，重载wing后生效");
+
+        // setTimeout(
+        //   () => vscode.commands.executeCommand("workbench.action.reloadWindow"),
+        //   1000
+        // );
       });
     });
   });
+  //导出皮肤中的中文标签
+  disposable = vscode.commands.registerCommand(
+    "extension.EgretI18nExportChinese",
+    () => {
+      exportChinese();
+    }
+  );
   context.subscriptions.push(disposable);
 }
 
