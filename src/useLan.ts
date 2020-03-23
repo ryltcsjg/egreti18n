@@ -50,7 +50,9 @@ function operateExmlfile(p: string) {
         );
       }
       id_name[id] = p;
-      name_id[p] = id;
+      name_id[
+        p.replace(workPath + "/" + skinPath + "/", "").replace(/\//g, "_")
+      ] = id;
     })
     .catch((e: any) => {
       Log.appendLine("失败operateExmlfile：" + e.message);
@@ -81,9 +83,11 @@ function readLanFiles(lan: string): Promise<any> {
       paths.forEach((path: string) => {
         let _promise = readFile(path, "utf-8").then((str: string) => {
           let data = JSON.parse(str);
-          let skinname = path
-            .replace(`${jsonPath}/${lan}`, skinPath)
-            .replace("_" + lan + ".json", ".exml");
+          let arr = path.split("/");
+          let skinname = arr[arr.length - 1].replace(
+            "_" + lan + ".json",
+            ".exml"
+          );
           let bindingDataTestObj = [];
           for (let key in data) {
             bindingDataTestObj.push({

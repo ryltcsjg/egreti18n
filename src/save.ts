@@ -126,11 +126,12 @@ function writeJsonFile(data: { [x: string]: any }, lan: string) {
           .replace(skinPath, destPath + "/" + lan)
           .replace(/\/[0-9a-zA-Z_]+\.exml$/, "");
 
-        let arrF = filePath.split("/");
-        let fileName = arrF[arrF.length - 1].replace(".exml", "");
+        // let arrF = filePath.split("/");
+        let fileName = filePath
+          .replace(workPath + "/" + skinPath + "/", "")
+          .replace(".exml", "")
+          .replace(/\//g, "_");
 
-        //创建文件夹
-        checkFilePath(dPath);
         //文本内容
         let content: { [x: string]: string } = {};
         bindingDataTestObj.forEach((item: any) => {
@@ -138,7 +139,11 @@ function writeJsonFile(data: { [x: string]: any }, lan: string) {
             (content[item.key.replace("$i18n.", "")] = item.value);
         });
         if (Object.keys(content).length > 0) {
+          //创建文件夹
+          checkFilePath(dPath);
+
           let filePath = dPath + "/" + fileName + "_" + lan + ".json";
+          console.log(filePath);
           //有数据---存储文件
           let _promise = writeFile(filePath, JSON.stringify(content)).then(
             () => {
