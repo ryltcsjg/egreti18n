@@ -28,7 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
   // context.subscriptions.push(disposable);
   //保存exml数据至json
   let disposable = vscode.commands.registerCommand(
-    "extension.EgretIi8nSave",
+    "extension.EgretI18nSave",
     () => {
       vscode.window.showInputBox().then(lan => {
         if (!lan) {

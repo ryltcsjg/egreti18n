@@ -167,9 +167,9 @@ export function save(lan: string) {
   Log.show();
 
   skinPath =
-    vscode.workspace.getConfiguration().get("EgretIi8n.skinPath") ||
+    vscode.workspace.getConfiguration().get("EgretI18n.skinPath") ||
     "resource/skins";
-  Log.appendLine("EgretIi8n.skinPath 皮肤文件路径：" + skinPath);
+  Log.appendLine("EgretI18n.skinPath 皮肤文件路径：" + skinPath);
 
   let cache = lan + formattime(Date.now());
   checkFilePath(`${workPath}/${destPath}/${lan}`);

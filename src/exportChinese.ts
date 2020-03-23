@@ -67,7 +67,7 @@ function operateExmlfile(p: string): Promise<any> {
 
       vscode.workspace
         .getConfiguration()
-        .get("EgretIi8n.exportTags")
+        .get("EgretI18n.exportTags")
         .forEach(([tag, lab]: [string, string]) => {
           data = data.replace(
             eval(`/<${tag} ((?!>[ ]*\\n)[\\s\\S])*>/g`),
@@ -125,9 +125,9 @@ export function exportChinese() {
   Log.show();
 
   skinPath =
-    vscode.workspace.getConfiguration().get("EgretIi8n.skinPath") ||
+    vscode.workspace.getConfiguration().get("EgretI18n.skinPath") ||
     "resource/skins";
-  Log.appendLine("EgretIi8n.skinPath 皮肤文件路径：" + skinPath);
+  Log.appendLine("EgretI18n.skinPath 皮肤文件路径：" + skinPath);
 
   Log.appendLine("开始读取皮肤文件！");
   readSkinFiles()

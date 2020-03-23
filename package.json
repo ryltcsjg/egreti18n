@@ -11,7 +11,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:extension.EgretIi8nSave",
+    "onCommand:extension.EgretI18nSave",
     "onCommand:extension.EgretI18nUse",
     "onCommand:extension.EgretI18nExportChinese"
   ],
@@ -19,26 +19,26 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.EgretIi8nSave",
-        "title": "EgretIi8n save",
+        "command": "extension.EgretI18nSave",
+        "title": "EgretI18n save",
         "category": "保存.exml内容至resource/i18n(覆盖)： "
       },
       {
         "command": "extension.EgretI18nUse",
-        "title": "EgretIi8n use",
+        "title": "EgretI18n use",
         "category": "切换语言（合并）： "
       },
       {
         "command": "extension.EgretI18nExportChinese",
-        "title": "EgretIi8n ExportChinese",
+        "title": "EgretI18n ExportChinese",
         "category": "提取皮肤文件中文至exml.json： "
       }
     ],
     "configuration": {
       "type": "object",
-      "title": "EgretIi8n",
+      "title": "EgretI18n",
       "properties": {
-        "EgretIi8n.skinPath": {
+        "EgretI18n.skinPath": {
           "type": "string",
           "items": {
             "type": "string"
@@ -47,7 +47,7 @@
           "scope": "window",
           "default": "resource/skins"
         },
-        "EgretIi8n.exportTags": {
+        "EgretI18n.exportTags": {
           "type": "array",
           "items": {
             "type": "array"

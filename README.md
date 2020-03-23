@@ -1,4 +1,4 @@
-#EgretIi8n  
+#EgretI18n  
 皮肤文件中绑定数据的多语言支持
 
 绑定数据格式需为： $i18n.\*
@@ -8,7 +8,7 @@ egreti18n save ： 保存exml.json文件中绑定数据$i18n.\* 至 resource/i18
 egreti18n use  ： 合并resource/i18n/{language}中的数据至 exml.json($i18n.\*) 并切换语言
   
 #设置：  
-EgretIi8n.skinPath：  设置皮肤所在文件夹，默认 resoruce/skins  
+EgretI18n.skinPath：  设置皮肤所在文件夹，默认 resoruce/skins  
   
   
 #皮肤绑定数据  
