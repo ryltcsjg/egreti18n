@@ -129,6 +129,13 @@ export function exportChinese() {
     "resource/skins";
   Log.appendLine("EgretI18n.skinPath 皮肤文件路径：" + skinPath);
 
+  Log.appendLine(
+    "导出标签：" +
+      JSON.stringify(
+        vscode.workspace.getConfiguration().get("EgretI18n.exportTags")
+      )
+  );
+
   Log.appendLine("开始读取皮肤文件！");
   readSkinFiles()
     .then(() =>
