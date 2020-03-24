@@ -112,7 +112,8 @@ function parseExmlFile(lan: string): Promise<{ [x: string]: any }> {
 }
 
 function writeJsonFile(data: { [x: string]: any }, lan: string) {
-  let promises = [];
+  // let promises = [];
+  let output: any = {};
   for (let key in data) {
     const item = data[key];
     if (typeof item === "object") {
@@ -121,9 +122,9 @@ function writeJsonFile(data: { [x: string]: any }, lan: string) {
       let filePath = id_name[key];
       if (bindingDataTestObj && bindingDataTestObj.length > 0 && filePath) {
         //目标路径
-        let dPath = filePath
-          .replace(skinPath, destPath + "/" + lan)
-          .replace(/\/[0-9a-zA-Z_]+\.exml$/, "");
+        // let dPath = filePath
+        //   .replace(skinPath, destPath + "/" + lan)
+        //   .replace(/\/[0-9a-zA-Z_]+\.exml$/, "");
 
         // let arrF = filePath.split("/");
         let fileName = filePath
@@ -138,26 +139,32 @@ function writeJsonFile(data: { [x: string]: any }, lan: string) {
             (content[item.key.replace("$i18n.", "")] = item.value);
         });
         if (Object.keys(content).length > 0) {
-          //创建文件夹
-          checkFilePath(dPath);
+          output[fileName] = content;
+          //   //创建文件夹
+          //   checkFilePath(dPath);
 
-          let filePath = dPath + "/" + fileName + "_" + lan + ".json";
-          console.log(filePath);
-          //有数据---存储文件
-          let _promise = writeFile(filePath, JSON.stringify(content)).then(
-            () => {
-              Log.appendLine(
-                "更新文件：" + filePath.replace(workPath + "/", "")
-              );
-            }
-          );
-          promises.push(_promise);
+          //   let filePath = dPath + "/" + fileName + "_" + lan + ".json";
+          //   console.log(filePath);
+          //   //有数据---存储文件
+          //   let _promise = writeFile(filePath, JSON.stringify(content)).then(
+          //     () => {
+          //       Log.appendLine(
+          //         "更新文件：" + filePath.replace(workPath + "/", "")
+          //       );
+          //     }
+          //   );
+          //   promises.push(_promise);
         }
       }
     }
   }
+  checkFilePath(`${workPath}/${destPath}`);
+  return writeFile(
+    `${workPath}/${destPath}/${lan}.json`,
+    JSON.stringify(output)
+  );
 
-  return Promise.all(promises);
+  // return Promise.all(promises);
 }
 
 /**
@@ -172,18 +179,18 @@ export function save(lan: string) {
   Log.appendLine("EgretI18n.skinPath 皮肤文件路径：" + skinPath);
 
   let cache = lan + formattime(Date.now());
-  checkFilePath(`${workPath}/${destPath}/${lan}`);
-  checkFilePath(`${workPath}/${cachePath}`);
+  // checkFilePath(`${workPath}/${destPath}`);
+  // checkFilePath(`${workPath}/${cachePath}`);
   Log.appendLine("备份文件至：" + cache);
   const p = childProcess.exec(`
-  mv ${workPath}/${destPath}/${lan} ${workPath}/${cachePath}/${cache}
+  mv ${workPath}/${destPath}/${lan}.json ${workPath}/${cachePath}/${cache}.json
   `);
   p.once("exit", function(code: number) {
-    if (code != 0) {
-      Log.appendLine("备份文件失败：" + code);
-      vscode.window.showInformationMessage("备份文件失败" + code);
-      return;
-    }
+    // if (code != 0) {
+    // Log.appendLine("备份文件失败：" + code);
+    // vscode.window.showInformationMessage("备份文件失败" + code);
+    // return;
+    // }
     existPaths = {};
 
     Log.appendLine("开始读取皮肤文件！");

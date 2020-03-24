@@ -73,38 +73,38 @@ function readSkinFiles() {
 
 function readLanFiles(lan: string): Promise<any> {
   output[lan] = {};
-  return findFile(`${workPath}/${jsonPath}/${lan}`, /\.json$/).then(
-    (paths: string[]) => {
-      if (!paths || paths.length <= 0) {
-        throw new Error(`找不到 ${workPath}/${jsonPath}/${lan}`);
+  // return findFile(`${workPath}/${jsonPath}/${lan}`, /\.json$/).then(
+  //   (paths: string[]) => {
+  //     if (!paths || paths.length <= 0) {
+  //       throw new Error(`找不到 ${workPath}/${jsonPath}/${lan}`);
+  //     }
+  //     let promises: Promise<any>[] = [];
+  //     paths.forEach((path: string) => {
+  return readFile(`${workPath}/${jsonPath}/${lan}.json`, "utf-8").then(
+    (str: string) => {
+      let data = JSON.parse(str);
+      for (let skinname in data) {
+        let bindingDataTestObj = [];
+        for (let key in data[skinname]) {
+          bindingDataTestObj.push({
+            key: `$i18n.${key}`,
+            value: data[skinname][key]
+          });
+        }
+        if (bindingDataTestObj.length > 0 && name_id[skinname + ".exml"]) {
+          output[lan][name_id[skinname + ".exml"]] = {
+            bindingDataTestObj
+          };
+        }
       }
-      let promises: Promise<any>[] = [];
-      paths.forEach((path: string) => {
-        let _promise = readFile(path, "utf-8").then((str: string) => {
-          let data = JSON.parse(str);
-          let arr = path.split("/");
-          let skinname = arr[arr.length - 1].replace(
-            "_" + lan + ".json",
-            ".exml"
-          );
-          let bindingDataTestObj = [];
-          for (let key in data) {
-            bindingDataTestObj.push({
-              key: `$i18n.${key}`,
-              value: data[key]
-            });
-          }
-          if (bindingDataTestObj.length > 0 && name_id[skinname]) {
-            output[lan][name_id[skinname]] = {
-              bindingDataTestObj
-            };
-          }
-        });
-        promises.push(_promise);
-      });
-      return Promise.all(promises);
     }
   );
+
+  //       promises.push(_promise);
+  //     });
+  //     return Promise.all(promises);
+  //   }
+  // );
 }
 
 function writeJsonFile(lan: string) {
@@ -112,7 +112,10 @@ function writeJsonFile(lan: string) {
   return readFile(jsonPath, "utf-8")
     .catch(() => JSON.stringify({}))
     .then((fileStr: string) => {
-      let data = JSON.parse(fileStr);
+      let data: any = {};
+      try {
+        data = JSON.parse(fileStr);
+      } catch (e) {}
       for (let key in output[lan]) {
         data[key] = data[key] || {};
         data[key]["bindingDataTestObj"] = coverData(
@@ -124,8 +127,8 @@ function writeJsonFile(lan: string) {
         Log.appendLine(`更新文件：${jsonPath}`);
       });
     })
-    .catch(() => {
-      Log.appendLine(`更新文件失败：${jsonPath}`);
+    .catch((e: any) => {
+      Log.appendLine(`更新文件失败：${jsonPath}, ${e.message}`);
     });
 }
 
