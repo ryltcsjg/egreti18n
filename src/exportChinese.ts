@@ -38,9 +38,6 @@ function operateExmlfile(p: string): Promise<any> {
       if (!idstr || idstr.length <= 0) {
         id = (Date.now() - Math.round(Math.random() * 10000000)).toString(16);
         data = data.replace(/<\?xml .+\?>[\n]+<e:Skin [^>]+>/, (v: string) => {
-          if (/states=".+"/.test(v)) {
-            return v;
-          }
           if (!/xmlns:w=".+"/.test(v)) {
             v =
               v.substr(0, v.length - 1) +
