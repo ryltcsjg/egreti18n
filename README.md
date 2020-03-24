@@ -25,7 +25,7 @@ EgretI18n.exportTags： 皮肤文件中要导出中文的标签
    ["e:TextInput", "prompt"]
  ]
 ```
-#皮肤绑定数据example  
+#代码example  
 ```
 eui.getTheme('resource/default.thm.json', (content: string) => {
   let data = JSON.parse(content);
@@ -33,127 +33,128 @@ eui.getTheme('resource/default.thm.json', (content: string) => {
   data.exmls.forEach((path: string) => {
     let fileArr = path.split('/');
     let filename = fileArr[fileArr.length - 1].replace('.exml', '');
-    legend.utils.i18n.setThemePath(filename,path);
+    i18n.setThemePath(filename,path);
   });
 });
 ```
 ```
 class I18n {
-	private static instance = null;
-	private themePath: { [x: string]: string } = {};
-	private language: string = 'zh';
-	private i18nComponents: { [x: number]: any } = {};
-	public init() {
-		this.defineComponentSkinName();
+private static instance = null;
+private themePath: { [x: string]: string } = {};
+private language: string = 'zh';
+private i18nComponents: { [x: number]: any } = {};
+public init() {
+  this.defineComponentSkinName();
 
-		this.setLanguage('zh');
-	}
+  this.setLanguage('zh');
+}
 
-	public setLanguage(lan: string) {
-		let oldLanguage = this.language;
-		this.language = lan;
+public setLanguage(lan: string) {
+  let oldLanguage = this.language;
+  this.language = lan;
 
-		let promises: Promise<any>[] = [];
-		for (let hashCode in this.i18nComponents) {
-			let { component, resName } = this.i18nComponents[hashCode];
-			resName = resName.replace(`_${oldLanguage}_json`, `_${lan}_json`);
-			if (component && resName && RES.hasRes(resName)) {
-				console.log(resName);
-				let data = RES.getRes(resName);
-				if (data) {
-					component['$i18n'] = data;
-					this.i18nComponents[hashCode].resName = resName;
-				} else {
-					let _pormise = RES.getResAsync(resName)
-						.then(data => {
-							component['$i18n'] = data;
-							this.i18nComponents[hashCode].resName = resName;
-						})
-						.catch(e => {});
+  let promises: Promise<any>[] = [];
+  for (let hashCode in this.i18nComponents) {
+    let { component, resName } = this.i18nComponents[hashCode];
+    resName = resName.replace(`_${oldLanguage}_json`, `_${lan}_json`);
+    if (component && resName && RES.hasRes(resName)) {
+      let data = RES.getRes(resName);
+      if (data) {
+        component['$i18n'] = data;
+        this.i18nComponents[hashCode].resName = resName;
+      } else {
+        let _pormise = RES.getResAsync(resName)
+          .then(data => {
+            component['$i18n'] = data;
+            this.i18nComponents[hashCode].resName = resName;
+          })
+          .catch(e => {});
 
-					promises.push(_pormise);
-				}
-			}
-		}
-		//showloading
-		Promise.all(promises).then(() => {
-            //closeLoading
-        }));
-	}
+        promises.push(_pormise);
+      }
+    }
+  }
+  //showloading
+  Promise.all(promises).then(() => {
+    //closeloading
+  });
+}
 
-	public getLanguage() {
-		return this.language;
-	}
+public getLanguage() {
+  return this.language;
+}
 
-	public setThemePath(fileName: string, path: string) {
-		this.themePath[fileName] && console.warn('重名', path);
-		this.themePath[fileName] = path;
-	}
+public setThemePath(fileName: string, path: string) {
+  this.themePath[fileName] && console.warn('重名', path);
+  this.themePath[fileName] = path;
+}
 
-	private defineComponentSkinName() {
-		const self = this;
-		const originalSkinnameGet = Object.getOwnPropertyDescriptor(eui.Component.prototype, 'skinName').get;
-		const originalSkinnameSet = Object.getOwnPropertyDescriptor(eui.Component.prototype, 'skinName').set;
+private defineComponentSkinName() {
+  const self = this;
+  const originalSkinnameGet = Object.getOwnPropertyDescriptor(eui.Component.prototype, 'skinName').get;
+  const originalSkinnameSet = Object.getOwnPropertyDescriptor(eui.Component.prototype, 'skinName').set;
 
-		Object.defineProperty(eui.Component.prototype, 'skinName', {
-			get: originalSkinnameGet,
-			set: function(name) {
-				originalSkinnameSet.call(this, name);
-				let resName = '';
-				if (typeof name === 'string') {
-					if (name.indexOf('/') != -1) {
-						resName = self.parseSkinName(name);
-					} else {
-						resName = egret.getImplementation('eui.Theme').getSkinName(this);
-						if (resName) {
-							resName = self.parseSkinName(resName);
-						} else if (self.themePath[name]) {
-							resName = self.parseSkinName(self.themePath[name]);
-						} else {
-							return;
-						}
-					}
-					if (resName && RES.hasRes(resName)) {
-						let data = RES.getRes(resName);
-						if (data) {
-							this['$i18n'] = data;
-						} else {
-							RES.getResAsync(resName)
-								.then(data => {
-									this['$i18n'] = data;
-								})
-								.catch(e => {});
-						}
-					}
-				}
-				let listener = self.i18nComponents[this.hashCode] && self.i18nComponents[this.hashCode].listener;
-				if (!listener) {
-					listener = this.addEventListener(egret.Event.REMOVED, (event: egret.Event) => {
-						!self.i18nComponents[this.hashCode] && console.error('错误');
-						delete self.i18nComponents[this.hashCode];
-					});
-				}
-				self.i18nComponents[this.hashCode] = {
-					component: this,
-					resName,
-					listener,
-				};
-			},
-		});
-	}
+  Object.defineProperty(eui.Component.prototype, 'skinName', {
+    get: originalSkinnameGet,
+    set: function(name) {
+      originalSkinnameSet.call(this, name);
+      let resName = '';
+      if (typeof name === 'string') {
+        if (name.indexOf('/') != -1) {
+          resName = self.parseSkinName(name);
+        } else {
+          resName = egret.getImplementation('eui.Theme').getSkinName(this);
+          if (resName) {
+            resName = self.parseSkinName(resName);
+          } else if (self.themePath[name]) {
+            resName = self.parseSkinName(self.themePath[name]);
+          } else {
+            return;
+          }
+        }
+        if (resName && RES.hasRes(resName)) {
+          let data = RES.getRes(resName);
+          if (data) {
+            this['$i18n'] = data;
+          } else {
+            RES.getResAsync(resName)
+              .then(data => {
+                this['$i18n'] = data;
+              })
+              .catch(e => {});
+          }
+        }
+      }
+      let listener = self.i18nComponents[this.hashCode] && self.i18nComponents[this.hashCode].listener;
+      if (!listener) {
+        listener = (event: egret.Event) => {
+          this.removeEventListener(egret.Event.REMOVED, listener, this);
+          !self.i18nComponents[this.hashCode] && console.error('错误');
+          delete self.i18nComponents[this.hashCode];
+        };
+        this.addEventListener(egret.Event.REMOVED, listener);
+      }
+      self.i18nComponents[this.hashCode] = {
+        component: this,
+        resName,
+        listener,
+      };
+    },
+  });
+}
 
-	private parseSkinName(name): string {
-		return (
-			name
-				.replace('resource/skins/', '')
-				.replace(/\//g, '_')
-				.replace('.exml', '') + `_${this.language}_json`
-		);
-	}
+private parseSkinName(name): string {
+  return (
+    name
+      .replace('resource/skins/', '')
+      .replace(/\//g, '_')
+      .replace('.exml', '') + `_${this.language}_json`
+  );
+}
 
-	public static getInstance() {
-		return I18n.instance || (I18n.instance = new I18n());
-	}
+public static getInstance() {
+  return I18n.instance || (I18n.instance = new I18n());
+}
 }
 
 export const i18n = I18n.getInstance();
