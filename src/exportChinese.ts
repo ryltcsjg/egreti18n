@@ -95,7 +95,7 @@ function operateExmlfile(p: string): Promise<any> {
                   // }
                   for (let i = 0; i < output[id].length; i++) {
                     if (output[id][i].value === value) {
-                      return `${lab}="{${output[id].key}}"`;
+                      return `${lab}="{${output[id][i].key}}"`;
                     }
                   }
                   output[id].push({
