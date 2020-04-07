@@ -1,7 +1,7 @@
 import { findFile, readFile, writeFile, coverData, Log } from "./util";
 
 const vscode = require("vscode");
-const uuid = require("uuid");
+// const uuid = require("uuid");
 
 const workPath = vscode.workspace.rootPath;
 
@@ -19,7 +19,7 @@ function readSkinFiles() {
         throw new Error(`${skinPath}中找不到.exml文件，请设置`);
       }
       let promises: Promise<any>[] = [];
-      files.forEach(file => {
+      files.forEach((file) => {
         promises.push(operateExmlfile(file));
       });
       return Promise.all(promises).then(() => {
@@ -61,7 +61,7 @@ function operateExmlfile(p: string): Promise<any> {
         );
         id_name[id] = p;
       }
-
+      let id_index = 0;
       vscode.workspace
         .getConfiguration()
         .get("EgretI18n.exportTags")
@@ -85,9 +85,9 @@ function operateExmlfile(p: string): Promise<any> {
                     .replace(eval(`/^${lab}="/`), "")
                     .replace(/"$/, "");
                   output[id] = output[id] || [];
-                  let uid = "";
+                  let uid = `${tag.replace(/^[a-zA-Z0-9]+:/, "")}_${id_index}`;
                   // while (true) {
-                  uid = uuid.v4().replace(/-/g, "");
+                  // uid = uuid.v4().replace(/-/g, "");
                   //   let isUnique = output[id].every(item => item.key !== `$i18n.${uid}`);
                   //   if (isUnique) {
                   //     break;
@@ -98,9 +98,10 @@ function operateExmlfile(p: string): Promise<any> {
                       return `${lab}="{${output[id][i].key}}"`;
                     }
                   }
+                  id_index++;
                   output[id].push({
                     key: `$i18n.${uid}`,
-                    value
+                    value,
                   });
                   return `${lab}="{$i18n.${uid}}"`;
                 }
@@ -140,7 +141,7 @@ export function exportChinese() {
         JSON.parse(data)
       )
     )
-    .then(data => {
+    .then((data) => {
       for (let key in output) {
         data[key] = data[key] || {};
         data[key]["bindingDataTestObj"] = coverData(
@@ -154,5 +155,5 @@ export function exportChinese() {
         }
       );
     })
-    .catch(e => console.error("error:", e));
+    .catch((e) => console.error("error:", e));
 }
