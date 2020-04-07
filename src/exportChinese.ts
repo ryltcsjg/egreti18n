@@ -61,7 +61,6 @@ function operateExmlfile(p: string): Promise<any> {
         );
         id_name[id] = p;
       }
-      let id_index = 0;
       vscode.workspace
         .getConfiguration()
         .get("EgretI18n.exportTags")
@@ -85,20 +84,23 @@ function operateExmlfile(p: string): Promise<any> {
                     .replace(eval(`/^${lab}="/`), "")
                     .replace(/"$/, "");
                   output[id] = output[id] || [];
-                  let uid = `${tag.replace(/^[a-zA-Z0-9]+:/, "")}_${id_index}`;
-                  // while (true) {
-                  // uid = uuid.v4().replace(/-/g, "");
-                  //   let isUnique = output[id].every(item => item.key !== `$i18n.${uid}`);
-                  //   if (isUnique) {
-                  //     break;
-                  //   }
-                  // }
+                  let uid = "";
+                  let id_index = 0;
+                  while (true) {
+                    uid = `${tag.replace(/^[a-zA-Z0-9]+:/, "")}_${id_index}`;
+                    let isUnique = output[id].every(
+                      (item: { key: string }) => item.key !== `$i18n.${uid}`
+                    );
+                    if (isUnique) {
+                      break;
+                    }
+                    id_index++;
+                  }
                   for (let i = 0; i < output[id].length; i++) {
                     if (output[id][i].value === value) {
                       return `${lab}="{${output[id][i].key}}"`;
                     }
                   }
-                  id_index++;
                   output[id].push({
                     key: `$i18n.${uid}`,
                     value,
