@@ -178,19 +178,10 @@ export function save(lan: string) {
     "resource/skins";
   Log.appendLine("EgretI18n.skinPath 皮肤文件路径：" + skinPath);
 
-  let cache = lan + formattime(Date.now());
-  // checkFilePath(`${workPath}/${destPath}`);
-  // checkFilePath(`${workPath}/${cachePath}`);
+  let cache = lan + formattime(Date.now(),'yyyyMMddHHmmss');
+  checkFilePath(`${workPath}/${cachePath}`);
   Log.appendLine("备份文件至：" + cache);
-  const p = childProcess.exec(`
-  mv ${workPath}/${destPath}/${lan}.json ${workPath}/${cachePath}/${cache}.json
-  `);
-  p.once("exit", function(code: number) {
-    // if (code != 0) {
-    // Log.appendLine("备份文件失败：" + code);
-    // vscode.window.showInformationMessage("备份文件失败" + code);
-    // return;
-    // }
+  require('fs').rename(`${workPath}/${destPath}/${lan}.json`,`${workPath}/${cachePath}/${cache}.json`,()=>{
     existPaths = {};
 
     Log.appendLine("开始读取皮肤文件！");
@@ -212,5 +203,5 @@ export function save(lan: string) {
         id_name = {};
         existPaths = {};
       });
-  });
+  })
 }
