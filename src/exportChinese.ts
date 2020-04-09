@@ -86,8 +86,10 @@ function operateExmlfile(p: string): Promise<any> {
                   output[id] = output[id] || [];
                   let uid = "";
                   let id_index = 0;
+                  let ms = v.match(eval(`/<${tag}/`));
+                  let head = ms && ms[0];
                   while (true) {
-                    uid = `${tag.replace(/^[a-zA-Z0-9]+:/, "")}_${id_index}`;
+                    uid = `${head && head.replace(/^<[a-zA-Z0-9]+:/, "")}_${id_index}`;
                     let isUnique = output[id].every(
                       (item: { key: string }) => item.key !== `$i18n.${uid}`
                     );
