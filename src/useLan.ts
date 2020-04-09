@@ -50,7 +50,7 @@ function operateExmlfile(p: string) {
       }
       id_name[id] = p;
       name_id[
-        p.replace(workPath + "/" + skinPath + "/", "").replace(/\//g, "_")
+        p.replace(workPath + "/" + skinPath + "/", "").replace(/[\/\\]/g, "_")
       ] = id;
     })
     .catch((e: any) => {

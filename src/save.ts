@@ -130,7 +130,7 @@ function writeJsonFile(data: { [x: string]: any }, lan: string) {
         let fileName = filePath
           .replace(workPath + "/" + skinPath + "/", "")
           .replace(".exml", "")
-          .replace(/\//g, "_");
+          .replace(/[\/\\]/g, "_");
 
         //文本内容
         let content: { [x: string]: string } = {};
