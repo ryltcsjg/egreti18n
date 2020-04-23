@@ -7,9 +7,11 @@ const workPath = vscode.workspace.rootPath;
 
 let skinPath = "";
 let exmlPath = ".wing/exml.json";
+const destCls2FilePath = "resource/i18n/class2filePath.json";
 
 let output: { [x: string]: any } = {};
 let id_name: { [x: string]: string } = {};
+let class2filePath: { [x: string]: string } = {};
 
 //读取皮肤文件结束
 function readSkinFiles() {
@@ -61,6 +63,14 @@ function operateExmlfile(p: string): Promise<any> {
         );
         id_name[id] = p;
       }
+
+      let marr = data.match(/<\?xml .+\?>[\n]+<e:Skin [^>]+>/);
+      let clstr = marr && marr[0];
+      //classname
+      marr = clstr.match(/class="[^"]+"/);
+      let clsname = marr && marr[0].replace(/^class="/, "").replace(/"$/, "");
+      class2filePath[clsname] = p.replace(`${workPath}/`, "");
+
       vscode.workspace
         .getConfiguration()
         .get("EgretI18n.exportTags")
@@ -89,7 +99,8 @@ function operateExmlfile(p: string): Promise<any> {
                   let ms = v.match(eval(`/<${tag}/`));
                   let head = ms && ms[0];
                   while (true) {
-                    uid = `${head && head.replace(/^<[a-zA-Z0-9]+:/, "")}_${id_index}`;
+                    uid = `${head &&
+                      head.replace(/^<[a-zA-Z0-9]+:/, "")}_${id_index}`;
                     let isUnique = output[id].every(
                       (item: { key: string }) => item.key !== `$i18n.${uid}`
                     );
@@ -126,6 +137,9 @@ function operateExmlfile(p: string): Promise<any> {
 export function exportChinese() {
   Log.show();
 
+  output = {};
+  class2filePath = {};
+
   skinPath =
     vscode.workspace.getConfiguration().get("EgretI18n.skinPath") ||
     "resource/skins";
@@ -159,5 +173,13 @@ export function exportChinese() {
         }
       );
     })
+    .then(() =>
+      writeFile(
+        `${workPath}/${destCls2FilePath}`,
+        JSON.stringify(class2filePath)
+      ).then(() => {
+        Log.appendLine(`更新文件：${destCls2FilePath}`);
+      })
+    )
     .catch((e) => console.error("error:", e));
 }
