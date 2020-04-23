@@ -204,7 +204,7 @@ export function exportChinese() {
     })
     .then(() => {
       checkFilePath(`${workPath}/${destCls2FilePath}`);
-      writeFile(
+      return writeFile(
         `${workPath}/${destCls2FilePath}/class2filePath.json`,
         JSON.stringify(class2filePath)
       ).then(() => {
