@@ -70,7 +70,7 @@ function operateExmlfile(p: string): Promise<any> {
       //classname
       marr = clstr.match(/class="[^"]+"/);
       let clsname = marr && marr[0].replace(/^class="/, "").replace(/"$/, "");
-      class2filePath[clsname] &&   Log.appendLine("重复的classname："+clsname);
+      class2filePath[clsname] && Log.appendLine("重复的classname：" + clsname);
       class2filePath[clsname] = p.replace(`${workPath}/`, "");
 
       vscode.workspace
@@ -184,9 +184,11 @@ export function exportChinese() {
   Log.appendLine("开始读取皮肤文件！");
   readSkinFiles()
     .then(() =>
-      readFile(`${workPath}/${exmlPath}`, "utf-8").then((data: string) =>
-        JSON.parse(data)
-      )
+      readFile(`${workPath}/${exmlPath}`, "utf-8")
+        .then((data: string) => JSON.parse(data))
+        .catch(() => {
+          return {};
+        })
     )
     .then((data) => {
       for (let key in output) {
