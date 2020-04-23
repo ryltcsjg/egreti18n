@@ -1,17 +1,18 @@
 import { findFile, readFile, writeFile, coverData, Log } from "./util";
 
 const vscode = require("vscode");
-// const uuid = require("uuid");
+const fs = require("fs");
 
 const workPath = vscode.workspace.rootPath;
 
 let skinPath = "";
 let exmlPath = ".wing/exml.json";
-const destCls2FilePath = "resource/i18n/class2filePath.json";
+const destCls2FilePath = "resource/i18n";
 
 let output: { [x: string]: any } = {};
 let id_name: { [x: string]: string } = {};
 let class2filePath: { [x: string]: string } = {};
+let existPaths: { [x: string]: boolean } = {};
 
 //读取皮肤文件结束
 function readSkinFiles() {
@@ -69,6 +70,7 @@ function operateExmlfile(p: string): Promise<any> {
       //classname
       marr = clstr.match(/class="[^"]+"/);
       let clsname = marr && marr[0].replace(/^class="/, "").replace(/"$/, "");
+      class2filePath[clsname] &&   Log.appendLine("重复的classname："+clsname);
       class2filePath[clsname] = p.replace(`${workPath}/`, "");
 
       vscode.workspace
@@ -134,12 +136,39 @@ function operateExmlfile(p: string): Promise<any> {
     });
 }
 
+function checkFilePath(p: string) {
+  if (existPaths[p]) {
+    return;
+  }
+  if (fs.existsSync(p)) {
+    existPaths[p] = true;
+    return;
+  }
+  let paths = p.split("/");
+  let ps: string[] = [];
+  paths.forEach((item) => {
+    ps.push(item);
+    let temppath = ps.join("/");
+
+    if (existPaths[temppath] || workPath.indexOf(temppath) != -1) {
+      return;
+    }
+    if (fs.existsSync(temppath)) {
+      existPaths[temppath] = true;
+      return;
+    }
+    Log.appendLine("mkdir：" + temppath);
+    fs.mkdirSync(temppath);
+    existPaths[temppath] = true;
+  });
+}
+
 export function exportChinese() {
   Log.show();
 
   output = {};
   class2filePath = {};
-
+  existPaths = {};
   skinPath =
     vscode.workspace.getConfiguration().get("EgretI18n.skinPath") ||
     "resource/skins";
@@ -173,13 +202,14 @@ export function exportChinese() {
         }
       );
     })
-    .then(() =>
+    .then(() => {
+      checkFilePath(`${workPath}/${destCls2FilePath}`);
       writeFile(
-        `${workPath}/${destCls2FilePath}`,
+        `${workPath}/${destCls2FilePath}/class2filePath.json`,
         JSON.stringify(class2filePath)
       ).then(() => {
         Log.appendLine(`更新文件：${destCls2FilePath}`);
-      })
-    )
+      });
+    })
     .catch((e) => console.error("error:", e));
 }
