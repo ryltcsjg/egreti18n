@@ -2,6 +2,9 @@
 
 Example: https://github.com/ryltcsjg/egret-mobx  
 
+npm i vsce -g  
+vsce package 打包插件  
+
 皮肤文件中绑定数据的多语言支持
 
 绑定数据格式需为： $i18n.\*
