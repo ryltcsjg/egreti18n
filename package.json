@@ -3,7 +3,8 @@
   "displayName": "egreti18n",
   "description": "",
   "version": "0.0.2",
-  "publisher": "ok",
+  "publisher": "okzone",
+  "repository": "https://github.com/ryltcsjg/egreti18n",
   "engines": {
     "vscode": "^1.43.0"
   },
