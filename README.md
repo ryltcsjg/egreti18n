@@ -17,9 +17,10 @@ EgretI18n ExportChinese(导出中文)==>egreti18n save（保存导出的数据�
 EgretI18n ExportChinese： 1、导出皮肤文件中的中文到exml.json文件；2、导出皮肤类名对应的文件地址  
 egreti18n save ： 保存exml.json文件中绑定数据$i18n.\* 至 resource/i18n/{language}.json 文件  
 egreti18n use  ： 合并resource/i18n/{language}中的数据至 exml.json($i18n.\*) 切换exml预览语言  
-#设置（settings.json）：  
+#设置（.wing/settings.json或.vscode/settings.json）：  
 EgretI18n.skinPath：  设置皮肤所在文件夹，默认值： resoruce/skins  
 EgretI18n.exportTags： 皮肤文件中要导出中文的标签  
+ 如<e:Label text="中文" /> 则添加一项  ["e:Label", "text"]
 ```
 默认值 
 [
