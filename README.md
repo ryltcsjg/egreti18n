@@ -7,7 +7,7 @@ vsce package 打包插件
 
 exml文件中绑定数据的多语言支持（插件支持vscode、wing中使用）。  
 1、通过绑定数据功能实现exml中的多语言支持，支持在wing编辑器中预览各语言效果。  
-2、对已完成项目友好，按一下步骤操作即可导出exml文件中的中文。  
+2、对已完成项目友好，按以下步骤操作即可导出exml文件中的中文。  
 EgretI18n ExportChinese(导出中文)==>egreti18n save（保存导出的数据至 resource/i18n/{language}.json，翻译时用此文件即可）  
 3、运行时实时切换语言  
 
