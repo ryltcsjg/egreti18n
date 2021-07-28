@@ -40,7 +40,7 @@ function operateExmlfile(p: string): Promise<any> {
       let id: any = "";
       if (!idstr || idstr.length <= 0) {
         id = (Date.now() - Math.round(Math.random() * 10000000)).toString(16);
-        data = data.replace(/<\?xml .+\?>[\n]+<e:Skin [^>]+>/, (v: string) => {
+        data = data.replace(/<\?xml .+\?>[\n\r]+<e:Skin [^>]+>/, (v: string) => {
           if (!/xmlns:w=".+"/.test(v)) {
             v =
               v.substr(0, v.length - 1) +
@@ -65,7 +65,7 @@ function operateExmlfile(p: string): Promise<any> {
         id_name[id] = p;
       }
 
-      let marr = data.match(/<\?xml .+\?>[\n]+<e:Skin [^>]+>/);
+      let marr = data.match(/<\?xml .+\?>[\n\r]+<e:Skin [^>]+>/);
       let clstr = marr && marr[0];
       //classname
       marr = clstr.match(/class="[^"]+"/);
@@ -78,7 +78,7 @@ function operateExmlfile(p: string): Promise<any> {
         .get("EgretI18n.exportTags")
         .forEach(([tag, lab]: [string, string]) => {
           data = data.replace(
-            eval(`/<${tag} ((?!>[ ]*\\n)[\\s\\S])*>/g`),
+            eval(`/<${tag} ((?!>[ ]*\\n\\r)[\\s\\S])*>/g`),
             (v: string) => {
               return v.replace(eval(`/${lab}="[^"]+"/`), (content: string) => {
                 if (!/[\u4e00-\u9fa5]/.test(content)) {
