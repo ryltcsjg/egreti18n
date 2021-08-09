@@ -40,15 +40,18 @@ function operateExmlfile(p: string): Promise<any> {
       let id: any = "";
       if (!idstr || idstr.length <= 0) {
         id = (Date.now() - Math.round(Math.random() * 10000000)).toString(16);
-        data = data.replace(/<\?xml .+\?>[\n\r]+<e:Skin [^>]+>/, (v: string) => {
-          if (!/xmlns:w=".+"/.test(v)) {
-            v =
-              v.substr(0, v.length - 1) +
-              ` xmlns:w="http://ns.egret.com/wing">`;
-          }
-          return `${v}
+        data = data.replace(
+          /<\?xml .+\?>[\r\n]+<e:Skin [^>]+>/,
+          (v: string) => {
+            if (!/xmlns:w=".+"/.test(v)) {
+              v =
+                v.substr(0, v.length - 1) +
+                ` xmlns:w="http://ns.egret.com/wing">`;
+            }
+            return `${v}
   <w:Config id="${id}"/>`;
-        });
+          }
+        );
       } else {
         id = /"[0-9a-zA-Z]+"/.exec(idstr[0]);
         id = id && id[0].replace(/"/g, "");
@@ -65,7 +68,7 @@ function operateExmlfile(p: string): Promise<any> {
         id_name[id] = p;
       }
 
-      let marr = data.match(/<\?xml .+\?>[\n\r]+<e:Skin [^>]+>/);
+      let marr = data.match(/<\?xml .+\?>[\r\n]+<e:Skin [^>]+>/);
       let clstr = marr && marr[0];
       //classname
       marr = clstr.match(/class="[^"]+"/);
@@ -73,14 +76,20 @@ function operateExmlfile(p: string): Promise<any> {
       class2filePath[clsname] && Log.appendLine("重复的classname：" + clsname);
       class2filePath[clsname] = p.replace(`${workPath}/`, "");
 
+      let usedIds: { [x: string]: any } = {};
       vscode.workspace
         .getConfiguration()
         .get("EgretI18n.exportTags")
         .forEach(([tag, lab]: [string, string]) => {
           data = data.replace(
-            eval(`/<${tag} ((?!>[ ]*\\n\\r)[\\s\\S])*>/g`),
+            eval(`/<${tag} ((?!>[ ]*\\r\\n)[\\s\\S])*>/g`),
             (v: string) => {
               return v.replace(eval(`/${lab}="[^"]+"/`), (content: string) => {
+                if (/\$i18n\.[a-zA-Z0-9]+/.test(content)) {
+                  let temp = content.match(/\$i18n\.[a-zA-Z0-9_]+/);
+                  let usedid = temp && temp[0] && temp[0].replace("$i18n.", "");
+                  usedid && (usedIds[usedid] = true);
+                }
                 if (!/[\u4e00-\u9fa5]/.test(content)) {
                   return content;
                 }
@@ -103,9 +112,10 @@ function operateExmlfile(p: string): Promise<any> {
                   while (true) {
                     uid = `${head &&
                       head.replace(/^<[a-zA-Z0-9]+:/, "")}_${id_index}`;
-                    let isUnique = output[id].every(
-                      (item: { key: string }) => item.key !== `$i18n.${uid}`
-                    );
+                    let isUnique =
+                      output[id].every(
+                        (item: { key: string }) => item.key !== `$i18n.${uid}`
+                      ) && !usedIds[uid];
                     if (isUnique) {
                       break;
                     }
